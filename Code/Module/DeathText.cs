@@ -23,13 +23,14 @@ namespace Celeste.Mod.DeathCount
             {
                 SaveData data = SaveData.Instance;
                 DrawText("Death Count : " + data.TotalDeaths.ToString(), Main.Settings.XPosition, Main.Settings.YPosition);
+            //Caca
             }
         }
 
         private void DrawText(String text, int x, int y)
         {
             ActiveFont.DrawOutline(text,position: new Vector2(x, y),justify: new Vector2(0f, 0f),
-                                scale: Vector2.One,color: Color.White, stroke: 2f,strokeColor: Color.Black) ;
+                                scale: new Vector2(0.5f, 0.5f),color: Color.White, stroke: 2f,strokeColor: Color.Black) ;
         }
     }
 }

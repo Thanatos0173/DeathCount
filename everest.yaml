@@ -5,7 +5,7 @@
 # Remove this comment once you've changed the template
 - Name: DeathCount
   Version: 1.0.0
-  DLL: DLL/deathCount.dll
+  DLL: DLL/deathcount.dll
   Dependencies:
     - Name: Everest
       Version: 1.1761.0
