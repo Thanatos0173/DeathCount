@@ -15,11 +15,11 @@ namespace Celeste.Mod.DeathCount
         public override void Render()
         {
 
-            if (Main.Settings.DeathCountMethodNumber == 0) { 
+            if (Main.Settings.DeathCountMethodNumber == 0 && Main.Settings.IsEnabled) { 
                 DrawText("Death Count : " + Main.Deaths, Main.Settings.XPosition, Main.Settings.YPosition);
 
             }
-            if (Main.Settings.DeathCountMethodNumber == 1)
+            if (Main.Settings.DeathCountMethodNumber == 1 && Main.Settings.IsEnabled)
             {
                 SaveData data = SaveData.Instance;
                 DrawText("Total Deaths : " + data.TotalDeaths.ToString(), Main.Settings.XPosition, Main.Settings.YPosition);
