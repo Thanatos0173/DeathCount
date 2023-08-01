@@ -3,8 +3,8 @@
 # Code folder stores all of the classes
 # Ahorn folder stores the plugins - copy over if you're making a helper
 # Remove this comment once you've changed the template
-- Name: jumpscare
-  Version: 0.0.0
+- Name: DeathCount
+  Version: 1.0.0
   DLL: DLL/deathCount.dll
   Dependencies:
     - Name: Everest
