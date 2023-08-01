@@ -46,11 +46,11 @@ namespace Celeste.Mod.DeathCount
             DoFastPosition = value;
             foreach(TextMenu.Option<int> option in optionList1)
             {
-                option.Disabled = !DoFastPosition;
+                option.Disabled = DoFastPosition;
             }
             foreach (TextMenu.Option<int> option in optionList2)
             {
-                option.Disabled = DoFastPosition;
+                option.Disabled = !DoFastPosition;
             }
 
         }
@@ -103,7 +103,7 @@ namespace Celeste.Mod.DeathCount
         {
             TextMenu.Option<int> option = new TextMenu.Slider("X Position", IntString, 0, 1913 - (int)ActiveFont.Measure("Death Count : " + Main.Deaths).X, XPosition)
                  .Change(newValue => XPosition = newValue);
-            option.Disabled = !DoFastPosition;
+            option.Disabled = DoFastPosition;
             menu.Add(option);
             optionList1.Add(option);
                                   
@@ -112,7 +112,7 @@ namespace Celeste.Mod.DeathCount
         {
             TextMenu.Option<int> option = new TextMenu.Slider("Y Position", IntString, 0, 1068 - (int)ActiveFont.Measure("Death Count : " + Main.Deaths).Y, YPosition)
                  .Change(newValue => YPosition = newValue);
-            option.Disabled = !DoFastPosition;
+            option.Disabled = DoFastPosition;
             menu.Add(option);
             optionList1.Add(option);
 
@@ -133,7 +133,7 @@ namespace Celeste.Mod.DeathCount
                 option
 
             );
-            option.Disabled = DoFastPosition;
+            option.Disabled = !DoFastPosition;
             optionList2.Add(option);
         }
         public void CreateDeathCountMethodNumberEntry(TextMenu menu, bool inGame)

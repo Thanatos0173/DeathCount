@@ -22,7 +22,7 @@ namespace Celeste.Mod.DeathCount
             if (Main.Settings.DeathCountMethodNumber == 1)
             {
                 SaveData data = SaveData.Instance;
-                DrawText("Death Count : " + data.TotalDeaths.ToString(), Main.Settings.XPosition, Main.Settings.YPosition);
+                DrawText("Total Deaths : " + data.TotalDeaths.ToString(), Main.Settings.XPosition, Main.Settings.YPosition);
             }
         }
         public Color GenerateRgb(string backgroundColor)
