@@ -4,7 +4,7 @@
 # Ahorn folder stores the plugins - copy over if you're making a helper
 # Remove this comment once you've changed the template
 - Name: DeathCount
-  Version: 1.0.0
+  Version: 1.1.0
   DLL: DLL/deathcount.dll
   Dependencies:
     - Name: Everest

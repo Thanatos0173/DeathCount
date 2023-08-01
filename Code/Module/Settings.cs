@@ -15,6 +15,10 @@ namespace Celeste.Mod.DeathCount
         public int DeathCountMethodNumber { get; set; } = 0;
         public int FastPositionNumber { get; set; } = 1;
         public bool DoFastPosition { get; set; } = true;
+        public string TextColor { get; set; } = "FFFFFF";
+        public string Stroke { get; set; } = "000000";
+
+        public float Scale { get; set; } = 0.5f;
 
 
         private static readonly string[] DeathCountMethod = new string[]
@@ -34,6 +38,7 @@ namespace Celeste.Mod.DeathCount
         private static List<TextMenu.Option<int>> optionList1 = new List<TextMenu.Option<int>>();
         private static List<TextMenu.Option<int>> optionList2 = new List<TextMenu.Option<int>>();
 
+        
 
 
         private void Edit(bool value,TextMenu menu)
@@ -96,7 +101,7 @@ namespace Celeste.Mod.DeathCount
         
         public void CreateXPositionEntry(TextMenu menu, bool inGame)
         {
-            TextMenu.Option<int> option = new TextMenu.Slider("X Position", IntString, 0, 1572, XPosition)
+            TextMenu.Option<int> option = new TextMenu.Slider("X Position", IntString, 0, 1913 - (int)ActiveFont.Measure("Death Count : " + Main.Deaths).X, XPosition)
                  .Change(newValue => XPosition = newValue);
             option.Disabled = !DoFastPosition;
             menu.Add(option);
@@ -105,12 +110,20 @@ namespace Celeste.Mod.DeathCount
         }
         public void CreateYPositionEntry(TextMenu menu, bool inGame)
         {
-            TextMenu.Option<int> option = new TextMenu.Slider("Y Position", IntString, 0, 997, YPosition)
+            TextMenu.Option<int> option = new TextMenu.Slider("Y Position", IntString, 0, 1068 - (int)ActiveFont.Measure("Death Count : " + Main.Deaths).Y, YPosition)
                  .Change(newValue => YPosition = newValue);
             option.Disabled = !DoFastPosition;
             menu.Add(option);
             optionList1.Add(option);
 
+        }
+
+        public void CreateScaleEntry(TextMenu menu, bool inGame)
+        {
+            TextMenu.Option<int> option = new TextMenu.Slider("Scale", IntString, 0, 10, (int)Scale/10)
+                 .Change(newValue => Scale = (newValue)/10f);
+            menu.Add(option);
+         
         }
         public void CreateFastPositionNumberEntry(TextMenu menu, bool inGame)
         {
@@ -135,6 +148,31 @@ namespace Celeste.Mod.DeathCount
         {
             menu.Add(new TextMenu.OnOff("Use Fast Position For Placing : ", DoFastPosition)
                 .Change(newValue => Edit(newValue,menu)));  
+        }
+
+        public void CreateTextColorEntry(TextMenu menu, bool inGame)
+        {
+            TextMenu.Item textMenu =new TextMenu.Button("Text Color: #"+TextColor)
+                .Pressed(() => {
+                 menu.SceneAs<Overworld>().Goto<OuiModOptionString>()
+                        .Init<OuiModOptions>("#" + TextColor,
+                            value => TextColor =value.ToUpper().Replace("#", ""), 6);
+                });
+            textMenu.Disabled = inGame;
+            menu.Add(textMenu);
+
+        }
+        public void CreateStrokeEntry(TextMenu menu, bool inGame)
+        {
+            TextMenu.Item textMenu = new TextMenu.Button("Stroke Color: #"+Stroke)
+                .Pressed(() => {
+                    menu.SceneAs<Overworld>().Goto<OuiModOptionString>()
+                           .Init<OuiModOptions>("#" + Stroke,
+                            value => Stroke = value.ToUpper().Replace("#",""), 6);
+                });
+            textMenu.Disabled = inGame;
+            menu.Add(textMenu);
+
         }
     }
 }
