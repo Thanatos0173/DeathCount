@@ -1,63 +1,189 @@
-﻿using IL.MonoMod;
+﻿using System;
+using System.Data;
+using Npgsql;
+using System.Net.NetworkInformation;
+using System.Linq;
 using Monocle;
-using On.Celeste;
-using System;
-using System.Windows.Forms;
+using SDL2;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using Microsoft.Xna.Framework;
+using System.Threading;
+using System.Diagnostics.Metrics;
 
-namespace Celeste.Mod.DeathCount
+namespace Celeste.Mod.MiaInfoGetter
 {
     public class Main : EverestModule
     {
-        public override Type SettingsType => typeof(SettingsClass);
-        public static SettingsClass Settings => (SettingsClass)Instance._Settings;
 
         public static Main Instance;
-
-        public static int Deaths = 0;
 
         public Main()
         {
             Instance = this;
         }
 
+        int pid = -1;
+
+        static string ip = "158.178.196.26";
+        static string db_name = "postgres";
+        static string user = "postgres";
+        static string pwd = "b6bfHDvAEwGkpVmrwPFbVD9898VJt5";
+
+        
         public override void Load()
         {
-            Logger.Log("DeathCound", "Loaded");
-            On.Celeste.Level.LoadLevel += AddDeathCount;
-            On.Celeste.Player.Update += ModPlayerUpdate;
-
+            Logger.Log("Mia_InfoGetter", "Loaded");
+            On.Celeste.Level.LoadLevel += LoadLevel;
+            On.Celeste.Player.Update += PlayerUpdate;
         }
-
         public override void Unload()
         {
-            Logger.Log("DeathCount", "Unloaded");
-            On.Celeste.Level.LoadLevel -= AddDeathCount;
-            On.Celeste.Player.Update -= ModPlayerUpdate;
+            Logger.Log("Mia_InfoGetter", "Unloaded");
+            On.Celeste.Level.LoadLevel -= LoadLevel;
+            On.Celeste.Player.Update -= PlayerUpdate;
         }
+        static bool doesUpdate = false;
+       
 
-        private void ModPlayerUpdate(On.Celeste.Player.orig_Update orig, Player self)
+        [Command("level", "Select level of the player")]
+        public static void LevelCommand(string level)
         {
-            orig(self);
-            if (self.Dead)
-            {
-                Deaths++;
+            if (!doesUpdate)
+             {
+                var macAddr = (
+                            from nic in NetworkInterface.GetAllNetworkInterfaces()
+                            where nic.OperationalStatus == OperationalStatus.Up
+                            select nic.GetPhysicalAddress().ToString()
+                        ).FirstOrDefault();
+
+                if (macAddr == null)
+                {
+                    Console.WriteLine("No MAC address found.");
+                    return;
+                }
+
+                var hashedMacAddr = BitConverter.ToUInt32(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(macAddr.ToLower())), 0);
+                var connectionString = $"Host={ip};Username={user};Password={pwd};Database={db_name}";
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand checkCommand = connection.CreateCommand();
+                    Utils.Utils.ExecuteSQLCommand(checkCommand, $"INSERT INTO Levels VALUES ((SELECT pid FROM Users WHERE ip_address = {hashedMacAddr}),{Int32.Parse(level)})");
+                    int result = Convert.ToInt32(checkCommand.ExecuteNonQuery());
+
+                };
+                doesUpdate = true;
+
             }
         }
-
-        public void AddDeathCount(On.Celeste.Level.orig_LoadLevel orig, Level level, Player.IntroTypes playerIntro, bool isFromLoader)
+        private void LoadLevel(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes playerIntro, bool isFromLoader)
         {
-            orig(level, playerIntro, isFromLoader);
+            orig(self, playerIntro, isFromLoader);
+            var macAddr = (
+                            from nic in NetworkInterface.GetAllNetworkInterfaces()
+                            where nic.OperationalStatus == OperationalStatus.Up
+                            select nic.GetPhysicalAddress().ToString()
+                        ).FirstOrDefault();
 
-            // only try to add if a player exists
-            // prevents crashing when loading a level without a player spawn object
-            if(isFromLoader) { Deaths = 0; }
-            if (level.Tracker.GetEntity<Player>() != null)
+            if (macAddr == null)
             {
+                Console.WriteLine("No MAC address found.");
+                return;
+            }   
 
-                level.Add(new DeathText());
+            var hashedMacAddr = BitConverter.ToUInt32(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(macAddr.ToLower())), 0);
+            var connectionString = $"Host={ip};Username={user};Password={pwd};Database={db_name}";
+            if (isFromLoader && self.Session.Area.SID == "mia3")
+            {
+                Task.Run(async () =>
+                {
+                    try
+                    {
+
+                        var dataSource = NpgsqlDataSource.Create(connectionString);
+
+                        var checkCommand = dataSource.CreateCommand($"SELECT COUNT(*) FROM Users WHERE ip_address = {hashedMacAddr}");
+                        var result = await checkCommand.ExecuteScalarAsync();
+
+                        if (result != null && Convert.ToInt32(result) == 0)
+                        {
+                            pid = Convert.ToInt32(await dataSource.CreateCommand("SELECT COALESCE(MAX(pid)+1,0) FROM Users").ExecuteScalarAsync());
+                            var insertCommand = dataSource.CreateCommand($"INSERT INTO Users VALUES ({pid},{hashedMacAddr})");
+                            await insertCommand.ExecuteNonQueryAsync();
+                        }
+                        else
+                        {
+                            var pidCommand = dataSource.CreateCommand($"SELECT pid FROM Users WHERE ip_address = {hashedMacAddr}");
+                            var pidResult = await pidCommand.ExecuteScalarAsync();
+                            pid = Convert.ToInt32(pidResult);
+                            Console.WriteLine($"The MAC address is already saved as pid {pid}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred when loading the level: {ex.Message}");
+                    }
+                });
 
             }
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                if (isFromLoader)
+                {
+                    connection.Open();
+                    NpgsqlCommand checkCommand = connection.CreateCommand();
+                    Utils.Utils.ExecuteSQLCommand(checkCommand, "SELECT COUNT(*) FROM(SELECT Users.ip_address, Levels.level FROM Levels JOIN Users ON Users.pid = Levels.id)");
+                    int result = Convert.ToInt32(checkCommand.ExecuteScalar());
+                    doesUpdate = (result != 0);
+                    if (result == 0 && isFromLoader && self.Session.Area.SID == "mia3" && !doesUpdate)
+                    {
+                        Textbox textbox = new Textbox("LEVEL_ALERT_1");
+                        self.Add(textbox);
+                    }
+                }
+
+            };
+            
+            
+        }
+
+       
+        private void PlayerUpdate(On.Celeste.Player.orig_Update orig, Player self)
+        {
+            if (doesUpdate)
+            {
+                orig(self);
+                if (Engine.Scene is Level level && pid != -1) // We wait until the pid is set
+                {
+                    try
+                    {
+                        var connectionString = $"Host={ip};Username={user};Password={pwd};Database={db_name}";
+                        
+                        using (var connection = new NpgsqlConnection(connectionString))
+                        {
+                            connection.Open();
+                            NpgsqlCommand checkCommand = connection.CreateCommand();
+                            string position = Utils.Utils.ConvertToString(TileManager.TileManager.FusedArrays(level, level.SolidsData.ToArray(), self));
+                            Utils.Utils.SavePosition(checkCommand, position);
+                            Utils.Utils.SaveKeypress(checkCommand, position, self, pid);
+                            Utils.Utils.SaveDeaths(checkCommand, position, self, pid);
+                            
+                        }
+                       
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred in file When updating the player {ex.ToString()}");
+                    }
+                
+                };
+
+            }
+
         }
     }
-
 }
