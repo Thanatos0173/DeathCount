@@ -12,6 +12,8 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using System.Threading;
 using System.Diagnostics.Metrics;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Celeste.Mod.MiaInfoGetter
 {
@@ -32,27 +34,34 @@ namespace Celeste.Mod.MiaInfoGetter
         static string user = "postgres";
         static string pwd = "b6bfHDvAEwGkpVmrwPFbVD9898VJt5";
 
-        
+        static List<string> l = new List<string>();
         public override void Load()
         {
             Logger.Log("Mia_InfoGetter", "Loaded");
             On.Celeste.Level.LoadLevel += LoadLevel;
             On.Celeste.Player.Update += PlayerUpdate;
+            Everest.Events.Level.OnExit += ExitLevel;
+            On.Celeste.Celeste.OnExiting += Exiting;
+
         }
+
         public override void Unload()
         {
             Logger.Log("Mia_InfoGetter", "Unloaded");
             On.Celeste.Level.LoadLevel -= LoadLevel;
             On.Celeste.Player.Update -= PlayerUpdate;
+            Everest.Events.Level.OnExit -= ExitLevel;
+            On.Celeste.Celeste.OnExiting -= Exiting;
+
         }
         static bool doesUpdate = false;
-       
+
 
         [Command("level", "Select level of the player")]
         public static void LevelCommand(string level)
         {
             if (!doesUpdate)
-             {
+            {
                 var macAddr = (
                             from nic in NetworkInterface.GetAllNetworkInterfaces()
                             where nic.OperationalStatus == OperationalStatus.Up
@@ -79,6 +88,48 @@ namespace Celeste.Mod.MiaInfoGetter
 
             }
         }
+
+
+        private void Exiting(On.Celeste.Celeste.orig_OnExiting orig, Celeste self, object sender, EventArgs args)
+        {
+            var connectionString = $"Host={ip};Username={user};Password={pwd};Database={db_name}";
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+
+                foreach (string s in l)
+                {
+                    NpgsqlCommand checkCommand = connection.CreateCommand();
+                    Utils.Utils.ExecuteSQLCommand(checkCommand, s);
+                    checkCommand.ExecuteNonQuery();
+
+                }
+
+            };
+            orig(self, sender, args);
+        }
+
+        private void ExitLevel(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow)
+        {
+            var connectionString = $"Host={ip};Username={user};Password={pwd};Database={db_name}";
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+
+                connection.Open();
+
+
+                foreach (string s in l)
+                {
+                    NpgsqlCommand checkCommand = connection.CreateCommand();
+                    Utils.Utils.ExecuteSQLCommand(checkCommand, s);
+                    checkCommand.ExecuteNonQuery();
+
+                }
+
+            };
+
+        }
+
         private void LoadLevel(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes playerIntro, bool isFromLoader)
         {
             orig(self, playerIntro, isFromLoader);
@@ -92,7 +143,7 @@ namespace Celeste.Mod.MiaInfoGetter
             {
                 Console.WriteLine("No MAC address found.");
                 return;
-            }   
+            }
 
             var hashedMacAddr = BitConverter.ToUInt32(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(macAddr.ToLower())), 0);
             var connectionString = $"Host={ip};Username={user};Password={pwd};Database={db_name}";
@@ -124,7 +175,7 @@ namespace Celeste.Mod.MiaInfoGetter
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"An error occurred when loading the level: {ex.Message}");
+                        Console.WriteLine($"An error occurred when loading the level: {ex.ToString()}");
                     }
                 });
 
@@ -146,44 +197,29 @@ namespace Celeste.Mod.MiaInfoGetter
                 }
 
             };
-            
-            
+
+
         }
 
-       
         private void PlayerUpdate(On.Celeste.Player.orig_Update orig, Player self)
         {
             if (doesUpdate)
             {
                 orig(self);
-                if (Engine.Scene is Level level && pid != -1) // We wait until the pid is set
+                if (Engine.Scene is Level level && pid != -1)
                 {
-                    try
-                    {
-                        var connectionString = $"Host={ip};Username={user};Password={pwd};Database={db_name}";
-                        
-                        using (var connection = new NpgsqlConnection(connectionString))
-                        {
-                            connection.Open();
-                            NpgsqlCommand checkCommand = connection.CreateCommand();
-                            string position = Utils.Utils.ConvertToString(TileManager.TileManager.FusedArrays(level, level.SolidsData.ToArray(), self));
-                            Utils.Utils.SavePosition(checkCommand, position);
-                            Utils.Utils.SaveKeypress(checkCommand, position, self, pid);
-                            Utils.Utils.SaveDeaths(checkCommand, position, self, pid);
-                            
-                        }
-                       
+                    
+                    var position = Utils.Utils.ConvertToString(TileManager.TileManager.FusedArrays(level, level.SolidsData.ToArray(), self));
 
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"An error occurred in file When updating the player {ex.ToString()}");
-                    }
-                
-                };
 
+                    Utils.Utils.SavePosition(position, l);
+                    Utils.Utils.SaveKeypress(position, self, pid, l);
+                    Utils.Utils.SaveDeaths(position, self, pid, l);
+
+
+                }
             }
-
         }
+
     }
 }

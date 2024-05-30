@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,6 +26,22 @@ namespace Celeste.Mod.MiaInfoGetter.Utils
 
         }
 
+        public static bool IsConnectedToInternet()
+        {
+            try
+            {
+                return NetworkInterface.GetIsNetworkAvailable() &&
+                       NetworkInterface.GetAllNetworkInterfaces()
+                           .Where(n => n.OperationalStatus == OperationalStatus.Up)
+                           .Any(n => n.NetworkInterfaceType != NetworkInterfaceType.Loopback &&
+                                     n.NetworkInterfaceType != NetworkInterfaceType.Tunnel);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public static string ConvertToString(int[,] array)
         {
             string s = "";
@@ -36,44 +53,26 @@ namespace Celeste.Mod.MiaInfoGetter.Utils
         {
             checkCommand.CommandText = command;
         }
-        public static void SavePosition(NpgsqlCommand checkCommand, string position)
+        public static void SavePosition(string position, List<string> l)
         {
-            ExecuteSQLCommand(checkCommand, $"SELECT COALESCE((SELECT id FROM Positions WHERE position = '{position}' LIMIT 1),-1);");
-            // Execute the command and get the result
-            var pos_id = checkCommand.ExecuteScalar();
-            if (Convert.ToInt32(pos_id) == -1) // The current position does not exist
-            {
-                ExecuteSQLCommand(checkCommand, "SELECT COUNT(*) FROM Positions");
-                int count = Convert.ToInt32(checkCommand.ExecuteScalar());
-                ExecuteSQLCommand(checkCommand, $"INSERT INTO Positions VALUES ({count},'{position}')");
-                checkCommand.ExecuteNonQuery();
-            }
+            l.Add($"DO $$ DECLARE x INT; c INT; BEGIN SELECT COALESCE((SELECT id FROM Positions WHERE position = '{position}' LIMIT 1),-1) INTO x; IF x = -1 THEN SELECT COUNT(x) INTO c FROM Positions; INSERT INTO Positions VALUES (c,'{position}'); END IF; END $$;");
+
+
         }
-        public static void SaveDeaths(NpgsqlCommand checkCommand, string position, Player self, int pid)
+        public static void SaveDeaths(string position, Player self, int pid, List<string> l)
         {
             if (self.Dead)
             {
-                double percentage = 100 * (self.Position.X / 3672);
-                ExecuteSQLCommand(checkCommand, $"SELECT id FROM Positions WHERE position = '{position}' LIMIT 1;");
-                int posID = Convert.ToInt32(checkCommand.ExecuteScalar());
-                ExecuteSQLCommand(checkCommand, $"SELECT COALESCE((SELECT occurences FROM Deaths WHERE (posid = {posID} AND pid = {pid} AND progression = {percentage})),0)  LIMIT 1;");
-                int result = Convert.ToInt32(checkCommand.ExecuteScalar());
-                if (result == 0) { ExecuteSQLCommand(checkCommand, $"INSERT INTO Deaths VALUES ({pid}, {posID}, {percentage}, {1})"); checkCommand.ExecuteNonQuery(); }
-                else { ExecuteSQLCommand(checkCommand, $"UPDATE Deaths SET occurences = {result} + 1 WHERE (posid = {posID} AND pid = {pid} AND progression = {percentage})"); checkCommand.ExecuteNonQuery(); }
+                l.Add($"DO $$ DECLARE percentage FLOAT := 100 * {self.Position.X} / 3672; x INT; y INT; pos INT; BEGIN CREATE TEMP TABLE temporary AS SELECT d.pid, d.progression, d.occurences, p.position, d.posid FROM deaths as d JOIN positions as p ON d.posid = p.id; SELECT occurences,posid INTO x,pos FROM temporary WHERE pid = {pid} AND position = '{position}' AND progression = percentage; IF x IS NULL THEN y := 0; ELSE y := x; END IF; IF y = 0 THEN INSERT INTO deaths VALUES ({pid}, pos, percentage, 1); ELSE UPDATE deaths SET occurences = y + 1 WHERE posid = pos AND pid = {pid} AND progression = percentage; END IF; END$$;");
             }
         }
-        public static void SaveKeypress(NpgsqlCommand checkCommand, string position, Player self, int pid)
+        public static void SaveKeypress(string position, Player self, int pid, List<string> l)
         {
             if (self.Position != self.PreviousPosition)
             {
-                ExecuteSQLCommand(checkCommand, $"SELECT id FROM Positions WHERE position = '{position}'  LIMIT 1;");
-                int posID = Convert.ToInt32(checkCommand.ExecuteScalar());
-                ExecuteSQLCommand(checkCommand, $"SELECT id FROM Moves WHERE move = '{GetInputs()}'  LIMIT 1;");
-                int moveID = Convert.ToInt32(checkCommand.ExecuteScalar());
-                ExecuteSQLCommand(checkCommand, $"SELECT COALESCE((SELECT occurence FROM MovesSaving WHERE (moveid = {moveID} AND positionid = {posID} AND userid = {pid}) LIMIT 1),0);");
-                int result = Convert.ToInt32(checkCommand.ExecuteScalar());
-                if (result == 0) { ExecuteSQLCommand(checkCommand, $"INSERT INTO MovesSaving VALUES ({moveID}, {posID}, {pid}, {1})"); checkCommand.ExecuteNonQuery(); }
-                else { ExecuteSQLCommand(checkCommand, $"UPDATE MovesSaving SET occurence = {result} + 1 WHERE (moveid = {moveID} AND positionid = {posID} AND userid = {pid})"); checkCommand.ExecuteNonQuery(); }
+                l.Add($"DO $$ DECLARE keypress VARCHAR(7) := '{GetInputs()}'; currpos VARCHAR(400) := '{position}'; moveidvar INT; posidvar INT; occvar INT; BEGIN SELECT id INTO moveidvar FROM moves WHERE move = keypress; SELECT id INTO posidvar FROM positions WHERE position = currpos; SELECT occurence INTO occvar FROM movessaving WHERE moveid = moveidvar AND positionid = posidvar AND userid = {pid}; IF occvar IS NULL THEN INSERT INTO movessaving VALUES (moveidvar, posidvar, {pid}, 1); ELSE UPDATE movessaving SET occurence = occvar + 1 WHERE moveid = moveidvar AND positionid = posidvar AND userid = {pid} AND occurence = occvar; END IF; END$$;"
+
+);
             }
         }
     }
