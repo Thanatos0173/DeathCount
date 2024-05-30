@@ -1,0 +1,70 @@
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\IronPython.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Microsoft.Dynamic.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Microsoft.Scripting.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Microsoft.Scripting.Metadata.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\MonoMod.RuntimeDetour.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Newtonsoft.Json.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\YamlDotNet.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\MonoMod.exe
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Jdenticon.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Mono.Cecil.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\MAB.DotIgnore.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\DotNetZip.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\NLua.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Mono.Cecil.Mdb.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Mono.Cecil.Pdb.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\System.Memory.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\KeraLua.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\System.Numerics.Vectors.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\System.Buffers.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Celeste.pdb
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Celeste.xml
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\FNA.xml
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\FNA.dll.config
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\IronPython.xml
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Microsoft.Dynamic.xml
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Microsoft.Scripting.xml
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Microsoft.Scripting.Metadata.xml
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\obj\Release\Mia.csproj.AssemblyReference.cache
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\obj\Release\Mia.csproj.CoreCompileInputs.cache
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\obj\Release\Mia.csproj.CopyComplete
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Mia.dll.config
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Mia.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\Mia.pdb
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\obj\Release\Mia.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\obj\Release\Mia.pdb
+F:\Mia\DLL\Mia.dll.config
+F:\Mia\DLL\Mia.dll
+F:\Mia\DLL\Mia.pdb
+F:\Mia\DLL\Microsoft.Dynamic.dll
+F:\Mia\DLL\Microsoft.Scripting.dll
+F:\Mia\DLL\Microsoft.Scripting.Metadata.dll
+F:\Mia\DLL\MonoMod.exe
+F:\Mia\DLL\Jdenticon.dll
+F:\Mia\DLL\Mono.Cecil.dll
+F:\Mia\DLL\MAB.DotIgnore.dll
+F:\Mia\DLL\DotNetZip.dll
+F:\Mia\DLL\NLua.dll
+F:\Mia\DLL\Mono.Cecil.Mdb.dll
+F:\Mia\DLL\Mono.Cecil.Pdb.dll
+F:\Mia\DLL\System.Memory.dll
+F:\Mia\DLL\System.Runtime.CompilerServices.Unsafe.dll
+F:\Mia\DLL\KeraLua.dll
+F:\Mia\DLL\System.Numerics.Vectors.dll
+F:\Mia\DLL\System.Buffers.dll
+F:\Mia\DLL\Celeste.pdb
+F:\Mia\DLL\Celeste.xml
+F:\Mia\DLL\FNA.xml
+F:\Mia\DLL\FNA.dll.config
+F:\Mia\DLL\IronPython.xml
+F:\Mia\DLL\Microsoft.Dynamic.xml
+F:\Mia\DLL\Microsoft.Scripting.xml
+F:\Mia\DLL\Microsoft.Scripting.Metadata.xml
+F:\Mia\obj\Release\Mia.csproj.AssemblyReference.cache
+F:\Mia\obj\Release\Mia.csproj.CoreCompileInputs.cache
+F:\Mia\obj\Release\Mia.csproj.CopyComplete
+F:\Mia\obj\Release\Mia.dll
+F:\Mia\obj\Release\Mia.pdb
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\WindowsInput.dll
+C:\Users\elioo\OneDrive\Bureau\TIPE\Celeste - Playable\Mods\Mia\DLL\WindowsInput.xml

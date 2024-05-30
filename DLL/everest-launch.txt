@@ -1,0 +1,13 @@
+# Add any Everest launch flags here.
+# Lines starting with # are ignored.
+# All options here are disabled by default.
+# Full list: https://github.com/EverestAPI/Resources/wiki/Command-Line-Arguments
+
+# Windows only: open a separate log console window.
+#--console
+
+# FNA only: force OpenGL (might be necessary to bypass a load crash on some PCs).
+#--graphics OpenGL
+
+# Change default log level (verbose will print all logs).
+#--loglevel verbose

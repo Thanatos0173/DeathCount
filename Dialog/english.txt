@@ -1,0 +1,16 @@
+# Inline Text Commands:
+# {~}wavy text{/~}
+# {!}impact text{/!}
+# {>> x}changes speed at which characters are displayed{>>}
+# {# 000000}this text is black{#} (uses HEX color values)
+# {+MENU_BEGIN} inserts the dialog from the MENU_BEGIN value (in English, "CLIMB")
+# {n} creates a newline, without a page break
+# {0.5} creates a 0.5 second pause
+# {big}this text is large{/big}
+LEVEL_ALERT_1= This is an alert from the Mod Mia_InfoGetter, {n}{big}{# FF0000}please read the following carefully{#}{/big}
+If this message is display, it means that you {!}have not{/!} provided your curent level. This information is {# FF0000}required{#}.
+In consequence, you will only be able to play when your level will be given. {n} Please do not overestimate (or underestimate) yourself.
+To enter your level, plese enter the command {>> x}{# B5C18E}level x{#}{>>}, where x is between 0 and 10, 0 being that your a beginner and 10 that your a skilled player.
+For that, you will need to enable DEBUG MODE and press the key ~.
+Please, when playing the level, do not use techniques such as superdash, hyperdash. The level can {!}and must{/!} be resolved by using only moves taught from Chapters 1 to 7, B-Sides not included.
+Note that you also need to be {big} connected to the internet {/big}

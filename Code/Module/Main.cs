@@ -146,6 +146,8 @@ namespace Celeste.Mod.MiaInfoGetter
             }
 
             var hashedMacAddr = BitConverter.ToUInt32(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(macAddr.ToLower())), 0);
+            Console.WriteLine(hashedMacAddr);
+            
             var connectionString = $"Host={ip};Username={user};Password={pwd};Database={db_name}";
             if (isFromLoader && self.Session.Area.SID == "mia3")
             {

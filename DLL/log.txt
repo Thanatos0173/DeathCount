@@ -1,0 +1,29 @@
+System.TypeInitializationException: The type initializer for 'Celeste.Celeste' threw an exception. ---> System.DllNotFoundException: Unable to load DLL 'SDL2': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at SDL2.SDL.INTERNAL_SDL_GetPlatform()
+   at SDL2.SDL.SDL_GetPlatform()
+   at Celeste.Celeste..cctor()
+   --- End of inner exception stack trace ---
+   at Celeste.Celeste.orig_Main(String[] args)
+--------------------------------
+Detailed exception log:
+--------------------------------
+System.TypeInitializationException: The type initializer for 'Celeste.Celeste' threw an exception.
+   at Celeste.Celeste.orig_Main(String[] args)
+--------------------------------
+System.DllNotFoundException: Unable to load DLL 'SDL2': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at SDL2.SDL.INTERNAL_SDL_GetPlatform()
+   at SDL2.SDL.SDL_GetPlatform()
+   at Celeste.Celeste..cctor()
+TypeLoadException.TypeName: 
+--------------------------------
+System.TypeInitializationException: The type initializer for 'Monocle.ErrorLog' threw an exception.
+   at Monocle.ErrorLog.Write(String str)
+   at Monocle.ErrorLog.Write(Exception e)
+   at Celeste.Celeste.orig_Main(String[] args)
+   at Celeste.Celeste.MainInner(String[] args)
+--------------------------------
+System.DllNotFoundException: Unable to load DLL 'SDL2': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at SDL2.SDL.INTERNAL_SDL_GetPlatform()
+   at Monocle.ErrorLog.GetLogPath()
+   at Monocle.ErrorLog..cctor()
+TypeLoadException.TypeName: 
